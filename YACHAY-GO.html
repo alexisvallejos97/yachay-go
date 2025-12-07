@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="YACHAY GO - Plataforma educativa offline para niños de zonas rurales">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌟</text></svg>">
+    <title>YACHAY GO - Aprende Jugando</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1em;
+        }
+
+        .install-banner {
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .install-banner.show {
+            display: block;
+        }
+
+        .install-btn {
+            background: white;
+            color: #37b24d;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .menu-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 30px 20px;
+            border-radius: 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .menu-btn .icon {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 15px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: #ee5a52;
+        }
+
+        .question-box {
+            background: #f0f4ff;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid #667eea;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .option-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .option-btn.correct {
+            background: #51cf66;
+            border-color: #51cf66;
+            color: white;
+        }
+
+        .option-btn.incorrect {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+            color: white;
+        }
+
+        .drawing-canvas {
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto 20px;
+            background: white;
+            touch-action: none;
+        }
+
+        .color-palette {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid #ddd;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn:hover, .color-btn.active {
+            transform: scale(1.2);
+            border-color: #333;
+        }
+
+        .tools {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tool-btn:hover {
+            background: #5568d3;
+        }
+
+        .story-text {
+            font-size: 1.3em;
+            line-height: 1.8;
+            color: #333;
+            background: #f0f4ff;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .feedback {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .feedback.success {
+            background: #d3f9d8;
+            color: #2b8a3e;
+        }
+
+        .feedback.error {
+            background: #ffe0e0;
+            color: #c92a2a;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #51cf66 0%, #37b24d 100%);
+            height: 100%;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .offline-badge {
+            background: #51cf66;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Banner de instalación -->
+        <div id="installBanner" class="install-banner">
+            <div>📱 ¡Instala YACHAY GO en tu dispositivo!</div>
+            <div style="font-size: 0.9em; margin-top: 5px;">Úsala sin internet en cualquier momento</div>
+            <button class="install-btn" id="installBtn">Instalar App</button>
+        </div>
+
+        <!-- Pantalla Principal -->
+        <div id="mainScreen" class="screen active">
+            <div class="header">
+                <div class="logo">🌟</div>
+                <h1>YACHAY GO</h1>
+                <p class="subtitle">¡Aprende y Diviértete sin Internet!</p>
+                <div class="offline-badge">✓ Funciona Offline</div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalPoints">0</div>
+                    <div class="stat-label">⭐ Puntos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalLessons">0</div>
+                    <div class="stat-label">📚 Lecciones</div>
+                </div>
+            </div>
+
+            <div class="menu">
+                <button class="menu-btn" onclick="showScreen('mathScreen')">
+                    <span class="icon">🔢</span>
+                    Matemáticas
+                </button>
+                <button class="menu-btn" onclick="showScreen('readingScreen')">
+                    <span class="icon">📖</span>
+                    Lectura
+                </button>
+                <button class="menu-btn" onclick="showScreen('drawingScreen')">
+                    <span class="icon">🎨</span>
+                    Dibujo
+                </button>
+                <button class="menu-btn" onclick="showScreen('gamesScreen')">
+                    <span class="icon">🎮</span>
+                    Juegos
+                </button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Matemáticas -->
+        <div id="mathScreen" class="screen">
+            <button class="back-btn" onclick="showScreen('mainScreen')">← Volver</button>
+            <h2 style="color: #667eea; margin-bottom: 20px; text-align: center;">🔢 Matemáticas</h2>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="mathProgress" style="width: 0%;">0%</div>
+            </div>
+
+            <div class="question-box" id="mathQuestion">
+                <div class="question-text" id="mathQuestionText"></div>
+                <div class="options" id="mathOptions"></div>
+            </div>
+            <div id="mathFeedback"></div>
+        </div>
+
+        <!-- Pantalla de Lectura -->
+        <div id="readingScreen" class="screen">
+            <button class="back-btn" onclick="showScreen('mainScreen')">← Volver</button>
+            <h2 style="color: #667eea; margin-bottom: 20px; text-align: center;">📖 Lectura</h2>
+            
+            <div class="story-text" id="storyText"></div>
+            <button class="menu-btn" style="width: 100%;" onclick="loadStory()">
+                📚 Siguiente Historia
+            </button>
+        </div>
+
+        <!-- Pantalla de Dibujo -->
+        <div id="drawingScreen" class="screen">
+            <button class="back-btn" onclick="showScreen('mainScreen')">← Volver</button>
+            <h2 style="color: #667eea; margin-bottom: 20px; text-align: center;">🎨 Dibuja Libremente</h2>
+            
+            <div class="color-palette" id="colorPalette"></div>
+            
+            <canvas id="drawingCanvas" class="drawing-canvas" width="400" height="400"></canvas>
+            
+            <div class="tools">
+                <button class="tool-btn" onclick="clearCanvas()">🗑️ Borrar Todo</button>
+                <button class="tool-btn" onclick="changeLineWidth(5)">Fino</button>
+                <button class="tool-btn" onclick="changeLineWidth(15)">Grueso</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Juegos -->
+        <div id="gamesScreen" class="screen">
+            <button class="back-btn" onclick="showScreen('mainScreen')">← Volver</button>
+            <h2 style="color: #667eea; margin-bottom: 20px; text-align: center;">🎮 Memoria</h2>
+            
+            <div class="question-box">
+                <p style="margin-bottom: 15px;">Encuentra las parejas de emojis:</p>
+                <div id="memoryGame" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+            </div>
+            <div id="gameFeedback"></div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let points = 0;
+        let lessons = 0;
+        let currentMathQuestion = 0;
+        let mathCorrectAnswers = 0;
+        let deferredPrompt;
+
+        // Canvas de dibujo
+        let canvas, ctx;
+        let isDrawing = false;
+        let currentColor = '#000000';
+        let lineWidth = 10;
+
+        // Juego de memoria
+        let memoryCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        // Preguntas de matemáticas
+        const mathQuestions = [
+            { question: "¿Cuánto es 2 + 3?", options: ["4", "5", "6", "7"], correct: 1 },
+            { question: "¿Cuánto es 10 - 4?", options: ["5", "6", "7", "8"], correct: 1 },
+            { question: "¿Cuánto es 3 × 2?", options: ["5", "6", "7", "8"], correct: 1 },
+            { question: "¿Cuánto es 8 ÷ 2?", options: ["2", "3", "4", "5"], correct: 2 },
+            { question: "¿Cuánto es 5 + 5?", options: ["8", "9", "10", "11"], correct: 2 }
+        ];
+
+        // Historias para lectura
+        const stories = [
+            "🐰 Había una vez un conejito llamado Saltarín que vivía en el bosque. Un día encontró una zanahoria gigante y decidió compartirla con todos sus amigos. Todos comieron felices y agradecidos. Saltarín aprendió que compartir es una forma de hacer amigos.",
+            "🌟 Luna era una estrellita que tenía miedo de brillar. Pensaba que su luz era muy pequeña. Pero una noche, un niño la vio y pidió un deseo. Luna entendió que incluso la luz más pequeña puede iluminar la oscuridad y hacer feliz a alguien.",
+            "🦁 Leo el león era el más valiente del reino, pero tenía miedo de algo: ¡las mariposas! Un día una mariposa se posó en su nariz y descubrió que era suave y hermosa. Leo aprendió que a veces nuestros miedos son más pequeños de lo que pensamos."
+        ];
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker registrado'))
+                .catch(err => console.log('Error al registrar SW:', err));
+        }
+
+        // PWA Install
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').classList.add('show');
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            document.getElementById('installBanner').classList.remove('show');
+        });
+
+        // Inicializar
+        window.onload = function() {
+            loadStats();
+            initDrawing();
+            initMemoryGame();
+        };
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+
+            if (screenId === 'mathScreen') {
+                currentMathQuestion = 0;
+                mathCorrectAnswers = 0;
+                loadMathQuestion();
+            } else if (screenId === 'readingScreen') {
+                loadStory();
+            } else if (screenId === 'gamesScreen') {
+                initMemoryGame();
+            }
+        }
+
+        // Matemáticas
+        function loadMathQuestion() {
+            if (currentMathQuestion >= mathQuestions.length) {
+                const percentage = (mathCorrectAnswers / mathQuestions.length) * 100;
+                document.getElementById('mathFeedback').innerHTML = 
+                    `<div class="feedback success">¡Terminaste! Respuestas correctas: ${mathCorrectAnswers}/${mathQuestions.length} 🎉</div>`;
+                addPoints(mathCorrectAnswers * 10);
+                lessons++;
+                saveStats();
+                return;
+            }
+
+            const q = mathQuestions[currentMathQuestion];
+            document.getElementById('mathQuestionText').textContent = q.question;
+            
+            const optionsHtml = q.options.map((opt, idx) => 
+                `<button class="option-btn" onclick="checkMathAnswer(${idx})">${opt}</button>`
+            ).join('');
+            
+            document.getElementById('mathOptions').innerHTML = optionsHtml;
+            document.getElementById('mathFeedback').innerHTML = '';
+
+            const progress = ((currentMathQuestion + 1) / mathQuestions.length) * 100;
+            document.getElementById('mathProgress').style.width = progress + '%';
+            document.getElementById('mathProgress').textContent = Math.round(progress) + '%';
+        }
+
+        function checkMathAnswer(selected) {
+            const q = mathQuestions[currentMathQuestion];
+            const buttons = document.querySelectorAll('#mathOptions .option-btn');
+            
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === q.correct) {
+                    btn.classList.add('correct');
+                } else if (idx === selected && selected !== q.correct) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            if (selected === q.correct) {
+                mathCorrectAnswers++;
+                document.getElementById('mathFeedback').innerHTML = 
+                    '<div class="feedback success">¡Muy bien! 🎉</div>';
+            } else {
+                document.getElementById('mathFeedback').innerHTML = 
+                    '<div class="feedback error">Intenta de nuevo en la próxima 💪</div>';
+            }
+
+            setTimeout(() => {
+                currentMathQuestion++;
+                loadMathQuestion();
+            }, 1500);
+        }
+
+        // Lectura
+        function loadStory() {
+            const randomStory = stories[Math.floor(Math.random() * stories.length)];
+            document.getElementById('storyText').textContent = randomStory;
+            addPoints(5);
+        }
+
+        // Dibujo
+        function initDrawing() {
+            canvas = document.getElementById('drawingCanvas');
+            ctx = canvas.getContext('2d');
+            
+            const colors = ['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500'];
+            const palette = document.getElementById('colorPalette');
+            
+            colors.forEach(color => {
+                const btn = document.createElement('div');
+                btn.className = 'color-btn';
+                btn.style.backgroundColor = color;
+                btn.onclick = () => selectColor(color, btn);
+                palette.appendChild(btn);
+            });
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+
+        function selectColor(color, btn) {
+            currentColor = color;
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            isDrawing = true;
+            ctx.beginPath();
+            ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        }
+
+        function handleTouchMove(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function changeLineWidth(width) {
+            lineWidth = width;
+        }
+
+        // Juego de memoria
+        function initMemoryGame() {
+            const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+            memoryCards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+            flippedCards = [];
+            matchedPairs = 0;
+
+            const gameDiv = document.getElementById('memoryGame');
+            gameDiv.innerHTML = '';
+
+            memoryCards.forEach((emoji, idx) => {
+                const card = document.createElement('button');
+                card.className = 'option-btn';
+                card.textContent = '?';
+                card.style.fontSize = '2em';
+                card.onclick = () => flipCard(idx, card, emoji);
+                gameDiv.appendChild(card);
+            });
+
+            document.getElementById('gameFeedback').innerHTML = '';
+        }
+
+        function flipCard(idx, card, emoji) {
+            if (flippedCards.length === 2 || card.classList.contains('correct')) return;
+
+            card.textContent = emoji;
+            flippedCards.push({ idx, card, emoji });
+
+            if (flippedCards.length === 2) {
+                setTimeout(checkMatch, 800);
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+
+            if (card1.emoji === card2.emoji) {
+                card1.card.classList.add('correct');
+                card2.card.classList.add('correct');
+                matchedPairs++;
+                addPoints(10);
+
+                if (matchedPairs === 8) {
+                    document.getElementById('gameFeedback').innerHTML = 
+                        '<div class="feedback success">¡Ganaste! 🏆</div>';
+                    lessons++;
+                    saveStats();
+                }
+            } else {
+                card1.card.textContent = '?';
+                card2.card.textContent = '?';
+            }
+
+            flippedCards = [];
+        }
+
+        // Sistema de puntos con localStorage
+        function addPoints(pts) {
+            points += pts;
+            saveStats();
+        }
+
+        function saveStats() {
+            document.getElementById('totalPoints').textContent = points;
+            document.getElementById('totalLessons').textContent = lessons;
+            try {
+                localStorage.setItem('yachay_points', points);
+                localStorage.setItem('yachay_lessons', lessons);
+            } catch(e) {}
+        }
+
+        function loadStats() {
+            try {
+                points = parseInt(localStorage.getItem('yachay_points')) || 0;
+                lessons = parseInt(localStorage.getItem('yachay_lessons')) || 0;
+            } catch(e) {}
+            document.getElementById('totalPoints').textContent = points;
+            document.getElementById('totalLessons').textContent = lessons;
+        }
+    </script>
+</body>
+</html>
